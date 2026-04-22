@@ -14,6 +14,15 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "node-cron": "^4.2.1",
     "sqlite3": "^6.0.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarcelloBonadias/app-escalas-ti.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MarcelloBonadias/app-escalas-ti/issues"
+  },
+  "homepage": "https://github.com/MarcelloBonadias/app-escalas-ti#readme"
 }

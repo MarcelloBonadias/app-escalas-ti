@@ -5,80 +5,69 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-// Permite que o nosso index.html converse com este servidor de forma segura
 app.use(cors());
 app.use(express.json());
 
-// Conecta ao banco de dados SQLite (Ele vai criar um arquivo "banco_escalas.db" sozinho!)
-const db = new sqlite3.Database('./banco_escalas.db', (err) => {
-    if (err) {
-        console.error('Erro ao conectar ao banco:', err.message);
-    } else {
-        console.log('Conectado ao banco de dados SQLite com sucesso!');
-        // Cria a "tabela" no banco de dados se ela ainda não existir
-        db.run(`CREATE TABLE IF NOT EXISTS escalas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            usuario TEXT,
-            status TEXT,
-            data TEXT,
-            hora_registro TEXT
-        )`);
+const db = new sqlite3.Database('banco_escalas.db', (err) => {
+    if (err) console.error('Erro:', err.message);
+    else {
+        console.log('Banco de dados conectado e operando!');
+        db.serialize(() => {
+            db.run(`CREATE TABLE IF NOT EXISTS escalas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                usuario TEXT, status TEXT, data TEXT, turno TEXT, hora_registro TEXT
+            )`);
+            db.run(`CREATE TABLE IF NOT EXISTS usuarios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT UNIQUE, cor TEXT, empresa TEXT, cargo TEXT, turno TEXT
+            )`);
+        });
     }
 });
 
-// Rota POST: Recebe os dados do calendário e SALVA no banco
-app.post('/api/escalas', (req, res) => {
-    const { usuario, status, data, hora_registro } = req.body;
-    
-    const sql = `INSERT INTO escalas (usuario, status, data, hora_registro) VALUES (?, ?, ?, ?)`;
-    db.run(sql, [usuario, status, data, hora_registro], function(err) {
-        if (err) {
-            return res.status(400).json({ erro: err.message });
-        }
-        console.log(`Nova escala salva: ${usuario} - ${status} em ${data}`);
-        res.json({ mensagem: 'Escala salva e pronta para validação!', id: this.lastID });
+// -- ROTAS DE ESCALA --
+app.get('/api/escalas', (req, res) => {
+    db.all("SELECT * FROM escalas", [], (err, rows) => res.json(rows));
+});
+
+app.post('/api/escalas/lote', (req, res) => {
+    const escalas = req.body;
+    db.serialize(() => {
+        db.run("BEGIN TRANSACTION");
+        const stmt = db.prepare(`INSERT INTO escalas (usuario, status, data, turno, hora_registro) VALUES (?, ?, ?, ?, ?)`);
+        escalas.forEach(e => stmt.run([e.usuario, e.status, e.data, e.turno, e.hora_registro]));
+        stmt.finalize();
+        db.run("COMMIT", (err) => res.json({ mensagem: 'Lote salvo com sucesso!' }));
     });
 });
 
-// Rota GET: Envia as escalas salvas DE VOLTA para o calendário exibir
-app.get('/api/escalas', (req, res) => {
-    const sql = `SELECT * FROM escalas`;
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            return res.status(400).json({ erro: err.message });
-        }
-        res.json(rows);
-    });
+app.post('/api/escalas', (req, res) => {
+    const { usuario, status, data, turno, hora_registro } = req.body;
+    db.run(`INSERT INTO escalas (usuario, status, data, turno, hora_registro) VALUES (?, ?, ?, ?, ?)`, 
+    [usuario, status, data, turno, hora_registro], function(err) { res.json({ id: this.lastID }); });
 });
-// Rota para limpeza em massa por nome e mês
+
+app.delete('/api/escalas/:id', (req, res) => {
+    db.run(`DELETE FROM escalas WHERE id = ?`, req.params.id, (err) => res.json({ mensagem: 'Deletado' }));
+});
+
 app.delete('/api/escalas/limpar/:usuario/:mesano', (req, res) => {
     const { usuario, mesano } = req.params;
-    const [mes, ano] = mesano.split('-');
-    // Cria um padrão para buscar todos os dias daquele mês (ex: 2026-04-%)
-    const padraoData = `${ano}-${mes.padStart(2, '0')}-%`;
+    const padraoData = `${mesano.split('-')[1]}-${mesano.split('-')[0].padStart(2, '0')}-%`;
+    db.run(`DELETE FROM escalas WHERE usuario = ? AND data LIKE ?`, [usuario, padraoData], (err) => res.json({ mensagem: 'Limpo' }));
+});
 
-    const sql = `DELETE FROM escalas WHERE usuario = ? AND data LIKE ?`;
-    db.run(sql, [usuario, padraoData], function(err) {
-        if (err) {
-            return res.status(400).json({ erro: err.message });
-        }
-        console.log(`Escala de ${usuario} limpa para o período ${mesano}`);
-        res.json({ mensagem: `Registros de ${usuario} removidos para o mês ${mesano}!` });
-    });
+// -- ROTAS DE USUÁRIOS --
+app.get('/api/usuarios', (req, res) => {
+    db.all("SELECT * FROM usuarios ORDER BY nome", [], (err, rows) => res.json(rows));
 });
-// Liga o servidor
-app.listen(port, () => {
-    console.log(`Servidor da T.I. rodando na porta http://localhost:${port}`);
+
+app.post('/api/usuarios', (req, res) => {
+    const { nome, cor, empresa, cargo, turno } = req.body;
+    db.run(`INSERT INTO usuarios (nome, cor, empresa, cargo, turno) VALUES (?, ?, ?, ?, ?)`, 
+    [nome, cor, empresa, cargo, turno], (err) => res.json({ mensagem: 'Adicionado' }));
 });
-// Rota DELETE: Apaga uma escala existente (para quando precisar trocar por folga)
-app.delete('/api/escalas/:id', (req, res) => {
-    const id = req.params.id;
-    db.run(`DELETE FROM escalas WHERE id = ?`, id, function(err) {
-        if (err) {
-            return res.status(400).json({ erro: err.message });
-        }
-        console.log(`Escala apagada com sucesso (ID: ${id})`);
-        res.json({ mensagem: 'Escala removida!' });
-    });
-    
-});
+
+app.delete('/api/usuarios/:id', (req, res) => db.run(`DELETE FROM usuarios WHERE id = ?`, req.params.id, (err) => res.json({})));
+
+app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));

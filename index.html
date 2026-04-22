@@ -3,371 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel T.I. - Calendário de Escalas</title>
-    <link rel="manifest" href="manifest.json">
+    <title>Painel T.I. - Gestão de Escalas PRO</title>
+    
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
-    <style>
-        /* =========================================
-           ESTILOS BASE (MODO ESCURO - PADRÃO)
-           ========================================= */
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #11111b 0%, #1e1e2e 50%, #29293f 100%);
-            color: #cdd6f4;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: background 0.4s ease, color 0.4s ease; /* Transição suave ao trocar de tema */
-        }
-
-        .navbar {
-            width: 100%;
-            background: rgba(30, 30, 46, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 15px 0;
-            display: flex;
-            justify-content: center;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            margin-bottom: 30px;
-            transition: background 0.4s ease, border-color 0.4s ease;
-        }
-
-        .navbar h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #b4befe;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .control-panel {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 900px;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            border: none;
-            padding: 12px 24px;
-            font-size: 15px;
-            font-weight: 600;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-        .btn:active { transform: translateY(1px); }
-
-        .btn-gerar { background: linear-gradient(135deg, #cba6f7, #b4befe); color: #11111b; }
-        .btn-limpar { background: linear-gradient(135deg, #f38ba8, #eba0ac); color: #11111b; }
-        
-        /* O novo botão de tema vai ficar alinhado à direita */
-        .btn-theme { 
-            background: linear-gradient(135deg, #f9e2af, #fab387); 
-            color: #11111b; 
-            margin-left: auto; 
-        }
-
-        #calendar-container {
-            width: 100%;
-            max-width: 900px;
-            background: rgba(49, 50, 68, 0.4);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-            margin-bottom: 40px;
-            transition: background 0.4s ease, border-color 0.4s ease;
-        }
-
-        .fc-theme-standard td, .fc-theme-standard th { border-color: rgba(255,255,255,0.05); }
-        .fc-col-header-cell-cushion, .fc-daygrid-day-number { color: #cdd6f4; text-decoration: none; font-weight: 500; }
-        .fc .fc-button-primary { 
-            background-color: rgba(137, 180, 250, 0.2) !important; 
-            border: 1px solid rgba(137, 180, 250, 0.5) !important; 
-            color: #89b4fa !important;
-            text-transform: capitalize;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        .fc .fc-button-primary:hover { background-color: rgba(137, 180, 250, 0.4) !important; }
-        .fc .fc-button-primary:not(:disabled).fc-button-active {
-            background-color: #89b4fa !important;
-            color: #11111b !important;
-        }
-        .fc-toolbar-title { font-size: 1.5em !important; font-weight: 700; color: #cdd6f4; }
-        .fc-event {
-            border-radius: 6px !important; border: none !important; padding: 2px 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s;
-        }
-        .fc-event:hover { transform: scale(1.02); cursor: pointer; }
-
-        /* =========================================
-           ESTILOS DO MODO CLARO (LIGHT MODE)
-           ========================================= */
-        body.light-mode {
-            background: linear-gradient(135deg, #e6e9ef 0%, #dce0e8 50%, #ccd0da 100%);
-            color: #4c4f69;
-        }
-
-        body.light-mode .navbar {
-            background: rgba(255, 255, 255, 0.6);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        body.light-mode .navbar h1 { color: #1e1e2e; }
-
-        body.light-mode #calendar-container {
-            background: rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-        }
-
-        body.light-mode .fc-theme-standard td, 
-        body.light-mode .fc-theme-standard th { 
-            border-color: rgba(0,0,0,0.05); 
-        }
-
-        body.light-mode .fc-col-header-cell-cushion, 
-        body.light-mode .fc-daygrid-day-number,
-        body.light-mode .fc-toolbar-title { 
-            color: #4c4f69; 
-        }
-
-        body.light-mode .btn-theme {
-            background: linear-gradient(135deg, #1e1e2e, #313244);
-            color: #cdd6f4;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
 
     <nav class="navbar">
-        <h1><span style="font-size: 1.2em;"></span> INFRAESTRUTURA T.I. - ESCALAS</h1>
+        <h1 style="margin:0; font-size: 24px;">🌐 INFRAESTRUTURA T.I. - ESCALAS</h1>
+        <div id="modo-badge" class="badge-admin">Modo Admin</div>
     </nav>
 
-    <div class="control-panel">
-        <button class="btn btn-gerar" id="btn-gerar">🤖 Gerar 12x36 Automático</button>
-        <button class="btn btn-limpar" id="btn-limpar">🗑️ Limpar por Nome</button>
-        <button class="btn btn-theme" id="btn-theme">☀️ Modo Claro</button>
+    <div class="app-container">
+        <aside class="sidebar">
+            <h3>Filtros de Exibição</h3>
+            <div class="filter-group">
+                <h4>Empresas</h4>
+                <label class="filter-item"><input type="checkbox" class="cb-empresa" value="HMID" checked> HMID</label>
+                <label class="filter-item"><input type="checkbox" class="cb-empresa" value="PSC" checked> PSC</label>
+            </div>
+            <div class="filter-group">
+                <h4>Cargos</h4>
+                <label class="filter-item"><input type="checkbox" class="cb-cargo" value="Técnico" checked> Técnicos</label>
+                <label class="filter-item"><input type="checkbox" class="cb-cargo" value="Analista" checked> Analistas</label>
+            </div>
+            <div class="filter-group">
+                <h4>Turnos</h4>
+                <label class="filter-item"><input type="checkbox" class="cb-turno" value="Diurno" checked> ☀️ Diurno</label>
+                <label class="filter-item"><input type="checkbox" class="cb-turno" value="Noturno" checked> 🌙 Noturno</label>
+                <label class="filter-item"><input type="checkbox" class="cb-turno" value="Ambos" checked> 🃏 Coringa</label>
+            </div>
+            <div class="filter-group">
+                <h4>Colaboradores</h4>
+                <div id="lista-filtros-pessoas"></div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="control-panel">
+                <div class="btn-group-left">
+                    <button class="btn btn-gerar admin-only" id="btn-abrir-gerador">🤖 Gerar Lote</button>
+                    <button class="btn btn-limpar admin-only" id="btn-abrir-limpeza">🗑️ Limpar Nome</button>
+                    <button class="btn btn-excel" id="btn-exportar-excel">📊 Exportar CSV</button>
+                    <button class="btn btn-print" onclick="window.print()">🖨️ PDF</button>
+                </div>
+                <div class="btn-group-right">
+                    <button class="btn btn-config admin-only" id="btn-abrir-equipe">👥 Nova Equipe</button>
+                    <button class="btn btn-theme" id="btn-theme">☀️ Tema</button>
+                </div>
+            </div>
+            
+            <div id="alerta-cobertura" class="alerta-cobertura" style="display:none;">
+                ⚠️ <strong>Atenção:</strong> Existem dias sem cobertura Diurna ou Noturna neste mês!
+            </div>
+
+            <div class="dashboard-panel" id="dashboard">
+                <span><strong>📊 Plantões Visíveis:</strong></span>
+                <span id="resumo-plantones" style="color: #a6e3a1;">Carregando...</span>
+            </div>
+
+            <div id="calendar-container"><div id='calendar'></div></div>
+        </main>
     </div>
 
-    <div id="calendar-container">
-        <div id='calendar'></div>
+    <div id="modal-equipe" class="modal">
+        <h3 style="margin-top:0;">Cadastrar Colaborador</h3>
+        <input type="text" id="novo-nome" class="form-input" placeholder="Nome Completo">
+        <select id="nova-empresa" class="form-input"><option value="HMID">HMID</option><option value="PSC">PSC</option></select>
+        <select id="novo-cargo" class="form-input"><option value="Técnico">Técnico</option><option value="Analista">Analista</option></select>
+        <select id="novo-turno" class="form-input">
+            <option value="Diurno">Diurno (07h-19h)</option>
+            <option value="Noturno">Noturno (19h-07h)</option>
+            <option value="Ambos">Ambos (Folguista / Coringa)</option>
+        </select>
+        <input type="color" id="nova-cor" value="#89b4fa" style="width: 100%; height: 40px; border: none; margin-bottom: 10px; cursor: pointer; border-radius: 5px;">
+        <button class="btn btn-gerar" id="btn-add-user" style="width: 100%; justify-content: center;">+ Adicionar</button>
+        <hr style="margin: 20px 0; border: 0.5px solid rgba(127, 132, 156, 0.3);">
+        <div id="lista-equipe" style="max-height: 150px; overflow-y: auto;"></div>
+        <button class="btn-fechar" onclick="document.getElementById('modal-equipe').style.display='none'">Fechar</button>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // ==========================================
-            // LÓGICA DO TEMA (DARK/LIGHT MODE)
-            // ==========================================
-            const btnTheme = document.getElementById('btn-theme');
-            const body = document.body;
+    <div id="modal-gerador" class="modal">
+        <h3 style="margin-top:0;">🤖 Gerar Escala</h3>
+        <select id="gerador-nome" class="form-input"></select>
+        
+        <div id="container-gerador-turno" style="display: none; background: rgba(249, 226, 175, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #f9e2af;">
+            <label style="color: #f9e2af; font-size: 0.85em;">Turno a cobrir:</label>
+            <select id="gerador-turno-escolhido" class="form-input" style="margin-top: 5px; margin-bottom: 0;">
+                <option value="Diurno">Dia (☀️)</option>
+                <option value="Noturno">Noite (🌙)</option>
+            </select>
+        </div>
+        
+        <select id="gerador-regra" class="form-input">
+            <option value="12x36-impar">12x36 (Dias Ímpares)</option>
+            <option value="12x36-par">12x36 (Dias Pares)</option>
+            <option value="seg-sex">Comercial (Segunda a Sexta)</option>
+            <option value="avulso">Dias Avulsos (Folguista)</option>
+        </select>
 
-            // 1. Verifica se o usuário já salvou preferência de tema antes
-            if (localStorage.getItem('theme') === 'light') {
-                body.classList.add('light-mode');
-                btnTheme.innerHTML = '🌙 Modo Escuro';
-            }
+        <div id="container-dias-avulsos" style="display: none;">
+            <label style="color: #a6adc8; font-size: 0.85em;">Dias (separados por vírgula):</label>
+            <input type="text" id="gerador-dias-manuais" class="form-input" placeholder="Ex: 02, 05, 12, 28">
+        </div>
 
-            // 2. Ação de clicar no botão
-            btnTheme.addEventListener('click', () => {
-                body.classList.toggle('light-mode'); // Adiciona ou remove a classe
-                
-                // Se o modo claro ativou, muda o texto e salva a preferência
-                if (body.classList.contains('light-mode')) {
-                    btnTheme.innerHTML = '🌙 Modo Escuro';
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    btnTheme.innerHTML = '☀️ Modo Claro';
-                    localStorage.setItem('theme', 'dark');
-                }
-            });
+        <input type="text" id="gerador-mes" class="form-input" placeholder="Mês/Ano (Ex: 04/2026)">
+        <button class="btn btn-gerar" id="btn-confirmar-gerador" style="width: 100%; justify-content: center;">Confirmar Geração</button>
+        <button class="btn-fechar" onclick="document.getElementById('modal-gerador').style.display='none'">Cancelar</button>
+    </div>
 
-            // ==========================================
-            // LÓGICA DO CALENDÁRIO (MANTIDA INTACTA)
-            // ==========================================
-            var calendarEl = document.getElementById('calendar');
+    <div id="modal-limpeza" class="modal">
+        <h3 style="margin-top:0;">🗑️ Limpar Escala</h3>
+        <select id="limpeza-nome" class="form-input"></select>
+        <input type="text" id="limpeza-mes" class="form-input" placeholder="Ex: 04/2026">
+        <button class="btn btn-limpar" id="btn-confirmar-limpeza" style="width: 100%; justify-content: center;">Apagar Registros</button>
+        <button class="btn-fechar" onclick="document.getElementById('modal-limpeza').style.display='none'">Cancelar</button>
+    </div>
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'pt-br',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek'
-                },
-                buttonText: { today: 'Hoje', month: 'Mês', week: 'Semana' },
-                selectable: true,
-                
-                events: async function(info, successCallback, failureCallback) {
-                    try {
-                        const response = await fetch('http://localhost:3000/api/escalas');
-                        const data = await response.json();
-                        
-                        const eventosFormatados = data.map(escala => {
-                            let corFundo = '';
-                            let nome = escala.usuario.toLowerCase();
+    <div id="modal-resumo-dia" class="modal">
+        <h3 id="titulo-resumo-dia" style="margin-top:0; border-bottom: 1px solid #45475a; padding-bottom: 10px;">📅 Resumo</h3>
+        <div id="conteudo-resumo" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+        
+        <div id="form-add-dia" class="admin-only" style="display: none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <select id="add-dia-nome" class="form-input"></select>
+            <div id="container-add-dia-turno" style="display: none;">
+                <select id="add-dia-turno-escolhido" class="form-input"><option value="Diurno">Dia</option><option value="Noturno">Noite</option></select>
+            </div>
+            <select id="add-dia-status" class="form-input">
+                <option value="Plantão">Plantão</option>
+                <option value="Fora de Plant.">Fora de Plant.</option>
+                <option value="Folga">Folga</option>
+                <option value="Atestado">Atestado</option>
+                <option value="Folga Feriado">Folga Feriado</option>
+                <option value="Ausente">Ausente</option>
+            </select>
+            <button class="btn btn-gerar" id="btn-salvar-dia" style="width: 100%; justify-content: center;">Salvar Alteração</button>
+        </div>
 
-                            if (nome.includes('marcello')) {
-                                corFundo = '#cba6f7'; 
-                            } else if (nome.includes('andre')) {
-                                corFundo = '#fab387'; 
-                            } else if (nome.includes('jeferson')) {
-                                corFundo = '#f38ba8'; 
-                            } else {
-                                corFundo = '#89b4fa'; 
-                            }
-
-                            let iconeStatus = '';
-                            switch (escala.status) {
-                                case 'Plantão': iconeStatus = '🖥️'; break;
-                                case 'Fora de Plant.': iconeStatus = '🛌'; break;
-                                case 'Folga': iconeStatus = '🏖️'; break;
-                                case 'Atestado': iconeStatus = '🏥'; break;
-                                case 'Ausente': iconeStatus = '⚠️'; break;
-                            }
-
-                            return {
-                                id: escala.id, 
-                                title: `${iconeStatus} ${escala.usuario} - ${escala.status}`,
-                                start: escala.data,
-                                allDay: true,
-                                backgroundColor: corFundo,
-                                borderColor: corFundo,
-                                textColor: '#11111b'
-                            };
-                        });
-                        successCallback(eventosFormatados);
-                    } catch (erro) {
-                        console.error("Erro:", erro);
-                        failureCallback(erro);
-                    }
-                },
-                
-                dateClick: function(info) {
-                    let tecnico = prompt('Quem será escalado/ausente neste dia? (Ex: Marcello)');
-                    if (!tecnico) return;
-
-                    let opcao = prompt('Status:\n1 - Plantão\n2 - Fora de Plantão\n3 - Folga Programada\n4 - Atestado Médico\n5 - Ausente');
-                    let statusTexto = '';
-                    switch (opcao) {
-                        case '1': statusTexto = 'Plantão'; break;
-                        case '2': statusTexto = 'Fora de Plant.'; break;
-                        case '3': statusTexto = 'Folga'; break;
-                        case '4': statusTexto = 'Atestado'; break;
-                        case '5': statusTexto = 'Ausente'; break;
-                        default: return;
-                    }
-
-                    const dados = { usuario: tecnico, status: statusTexto, data: info.dateStr, hora_registro: new Date().toLocaleString('pt-BR') };
-
-                    fetch('http://localhost:3000/api/escalas', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(dados)
-                    }).then(() => calendar.refetchEvents());
-                },
-
-                eventClick: function(info) {
-                    if (confirm(`Deseja apagar o registro "${info.event.title}"?`)) {
-                        fetch(`http://localhost:3000/api/escalas/${info.event.id}`, { method: 'DELETE' })
-                        .then(() => info.event.remove()); 
-                    }
-                }
-            });
-
-            calendar.render();
-
-            document.getElementById('btn-gerar').addEventListener('click', async () => {
-                let tecnico = prompt('Qual o nome do técnico? (Ex: Marcello ou Andre Ataide)');
-                if (!tecnico) return;
-
-                let tipo = prompt('Digite 1 para dias ÍMPARES ou 2 para dias PARES:');
-                if (tipo !== '1' && tipo !== '2') {
-                    alert('Opção inválida.');
-                    return;
-                }
-
-                let mesAno = prompt('Qual o mês e ano? (Ex: 04/2026)');
-                if(!mesAno || !mesAno.includes('/')) return;
-                
-                let partesData = mesAno.split('/');
-                let mes = parseInt(partesData[0]);
-                let ano = parseInt(partesData[1]);
-
-                let diasNoMes = new Date(ano, mes, 0).getDate();
-
-                for (let dia = 1; dia <= diasNoMes; dia++) {
-                    let ehPar = (dia % 2 === 0);
-                    
-                    if ((tipo === '1' && !ehPar) || (tipo === '2' && ehPar)) {
-                        let dataFormatada = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-                        
-                        const dados = {
-                            usuario: tecnico,
-                            status: 'Plantão',
-                            data: dataFormatada,
-                            hora_registro: new Date().toLocaleString('pt-BR')
-                        };
-
-                        await fetch('http://localhost:3000/api/escalas', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(dados)
-                        });
-                    }
-                }
-
-                alert(`Escala 12x36 gerada para ${tecnico}! Pronta para revisão do Jeferson.`);
-                calendar.refetchEvents();
-            });
-
-            document.getElementById('btn-limpar').addEventListener('click', async () => {
-                let usuarioParaLimpar = prompt('Qual nome deseja apagar do calendário? (Ex: Marcello Evangelista Bonadias)');
-                if (!usuarioParaLimpar) return;
-
-                let mesAno = prompt('De qual mês/ano deseja apagar? (Ex: 04/2026)');
-                if (!mesAno || !mesAno.includes('/')) return;
-
-                let periodo = mesAno.replace('/', '-');
-
-                if (confirm(`Tem certeza que deseja apagar TODOS os registros de "${usuarioParaLimpar}" no mês ${mesAno}?`)) {
-                    try {
-                        const response = await fetch(`http://localhost:3000/api/escalas/limpar/${encodeURIComponent(usuarioParaLimpar)}/${periodo}`, {
-                            method: 'DELETE'
-                        });
-                        const resultado = await response.json();
-                        alert(resultado.mensagem);
-                        calendar.refetchEvents(); 
-                    } catch (error) {
-                        console.error('Erro ao limpar:', error);
-                        alert('Erro ao tentar apagar os registros.');
-                    }
-                }
-            });
-
-        });
-    </script>
+        <button class="btn btn-config admin-only" id="btn-toggle-add-dia" style="width: 100%; justify-content: center;">+ Adicionar Registro</button>
+        <button class="btn-fechar" onclick="document.getElementById('modal-resumo-dia').style.display='none'">Fechar</button>
+    </div>
 </body>
 </html>

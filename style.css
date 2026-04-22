@@ -1,0 +1,67 @@
+/* BASE E LAYOUT */
+body { font-family: 'Segoe UI', sans-serif; background: #11111b; color: #cdd6f4; margin: 0; display: flex; flex-direction: column; align-items: center; transition: background 0.4s, color 0.4s; height: 100vh; overflow: hidden; }
+.navbar { width: 100%; background: rgba(30, 30, 46, 0.6); backdrop-filter: blur(12px); padding: 15px 0; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; position: relative; }
+.app-container { display: flex; width: 100%; max-width: 1400px; height: calc(100vh - 70px); padding: 15px; box-sizing: border-box; gap: 20px; }
+
+/* BADGES MODO ADMIN/VIEW */
+.badge-admin { position: absolute; right: 20px; top: 15px; padding: 6px 15px; border-radius: 20px; background: #f9e2af; color: #11111b; font-weight: bold; font-size: 0.85em; box-shadow: 0 0 10px rgba(249, 226, 175, 0.3); }
+.badge-view { position: absolute; right: 20px; top: 15px; padding: 6px 15px; border-radius: 20px; background: #45475a; color: #cdd6f4; font-weight: bold; font-size: 0.85em; }
+
+/* SIDEBAR E FILTROS */
+.sidebar { width: 260px; background: rgba(49, 50, 68, 0.4); backdrop-filter: blur(16px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); overflow-y: auto; flex-shrink: 0; }
+.sidebar h3 { margin-top: 0; color: #b4befe; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; font-size: 1.1em; }
+.filter-group { margin-bottom: 20px; }
+.filter-group h4 { margin: 0 0 10px 0; color: #a6adc8; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
+.filter-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.95em; cursor: pointer; }
+.filter-item input[type="checkbox"] { accent-color: #cba6f7; width: 16px; height: 16px; cursor: pointer; }
+
+/* CONTEÚDO PRINCIPAL E BOTÕES */
+.main-content { flex: 1; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
+#calendar-container { background: rgba(49, 50, 68, 0.4); backdrop-filter: blur(16px); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); flex: 1; min-height: 500px; height: max-content; }
+.control-panel { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.btn-group-left, .btn-group-right { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; display: flex; align-items: center; gap: 5px; font-size: 0.9em; }
+.btn:hover { transform: translateY(-2px); opacity: 0.9; }
+.btn-gerar { background: #cba6f7; color: #11111b; }
+.btn-limpar { background: #f38ba8; color: #11111b; }
+.btn-config { background: #94e2d5; color: #11111b; }
+.btn-theme { background: #f9e2af; color: #11111b; }
+.btn-print { background: #cdd6f4; color: #11111b; }
+.btn-excel { background: #a6e3a1; color: #11111b; }
+.dashboard-panel { padding: 15px; background: rgba(49, 50, 68, 0.6); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 0.95em; }
+.alerta-cobertura { width: 100%; padding: 10px; background: rgba(243, 139, 168, 0.2); border: 1px solid #f38ba8; border-radius: 8px; color: #f38ba8; font-size: 0.95em; text-align: center; box-sizing: border-box; }
+
+/* MODAIS */
+.modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e1e2e; padding: 30px; border-radius: 15px; border: 1px solid #b4befe; z-index: 1000; box-shadow: 0 0 50px rgba(0,0,0,0.8); width: 380px; }
+.user-item { display: flex; justify-content: space-between; align-items: center; background: #313244; padding: 8px; margin-top: 5px; border-radius: 5px; font-size: 0.9em; }
+.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+.btn-del { background: none; border: none; color: #f38ba8; cursor: pointer; font-weight: bold; }
+.categoria-resumo { margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border-left: 4px solid #b4befe; }
+.categoria-resumo strong { color: #cdd6f4; font-size: 1.1em; display: block; margin-bottom: 5px; }
+.categoria-resumo ul { margin: 0; padding-left: 20px; color: #a6adc8; }
+.btn-fechar { margin-top: 15px; width: 100%; padding: 10px; background: #45475a; color: #cdd6f4; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.form-input { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #45475a; background: #313244; color: #cdd6f4; box-sizing: border-box; }
+
+/* FULLCALENDAR & EVENTOS */
+.fc-toolbar-title { text-transform: capitalize; }
+.fc-theme-standard td, .fc-theme-standard th { border-color: rgba(255,255,255,0.05); cursor: pointer; }
+.fc .fc-button-primary { background-color: #89b4fa !important; border: none !important; color: #11111b !important; }
+.evento-noturno { box-shadow: inset 0 3px 6px rgba(0,0,0,0.4) !important; }
+.dia-sem-cobertura { background-color: rgba(243, 139, 168, 0.15) !important; }
+
+/* REGRAS DE ACESSO (VIEW MODE) */
+body.view-mode .admin-only { display: none !important; }
+
+/* MODO CLARO */
+body.light-mode { background: #e6e9ef; color: #4c4f69; }
+body.light-mode .navbar, body.light-mode .sidebar, body.light-mode #calendar-container, body.light-mode .dashboard-panel { background: rgba(255, 255, 255, 0.6); border-color: rgba(0,0,0,0.1); }
+body.light-mode .sidebar h3 { color: #1e1e2e; } body.light-mode .filter-group h4 { color: #5c5f77; }
+body.light-mode .fc-theme-standard td, body.light-mode .fc-theme-standard th { border-color: rgba(0,0,0,0.05); }
+body.light-mode .btn-theme { background: #313244; color: #cdd6f4; }
+body.light-mode .modal { background: #eff1f5; color: #4c4f69; border-color: #9ca0b0; }
+body.light-mode .user-item, body.light-mode .form-input { background: #ccd0da; color: #4c4f69; border-color: #9ca0b0; }
+body.light-mode .categoria-resumo { background: rgba(255,255,255,0.6); border-left-color: #1e1e2e; }
+body.light-mode .btn-fechar { background: #bcc0cc; color: #1e1e2e; }
+body.light-mode .alerta-cobertura { background: rgba(210, 15, 57, 0.1); border-color: #d20f39; color: #d20f39; }
+
+@media print { body { background: #fff !important; color: #000 !important; height: auto; overflow: visible; } .navbar, .sidebar, .control-panel, .dashboard-panel, .modal, .alerta-cobertura { display: none !important; } .app-container { padding: 0; width: 100%; height: auto; display: block; } #calendar-container { width: 100%; max-width: 100%; box-shadow: none; border: none; padding: 0; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }
