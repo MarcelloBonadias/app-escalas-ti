@@ -1,0 +1,3 @@
+node_modules/
+banco_escalas.db
+.DS_Store
