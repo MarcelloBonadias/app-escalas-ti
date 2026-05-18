@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal - Escalas da DTI</title>
+    <link rel="icon" href="imagens/logo-noc.png" type="image">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="portal.css">
+    
+    <script src="portal.js" defer></script>
+</head>
+<body class="portal-body">
+    
+    <div id="cursor-blur"></div>
+<button id="btn-theme-portal" class="btn" style="position: absolute; top: 20px; right: 20px;">☀️ Tema</button>
+    <div class="portal-container">
+        <header class="portal-header">
+            <div class="portal-logo">ESCALAS DA TI</div>
+            <p class="portal-subtitle">HUB DE ESCALAS</p>
+        </header>
+        
+        
+        <nav class="portal-nav">
+            <a href="index.html" class="entry-card">
+                <div class="icon">📅</div>
+                <h3>ESCALAS</h3>
+                <span class="access-label">MODO CONSULTA</span>
+            </a>
+
+            <a href="equipe.html" class="entry-card team-variant">
+                <div class="icon">👥</div>
+                <h3>EQUIPE</h3>
+                <span class="access-label">DATABASE</span>
+            </a>
+
+            <a href="#" id="btn-admin" class="entry-card admin-variant">
+                <div class="icon">🔐</div>
+                <h3>ADMINISTRAÇÃO</h3>
+                <span class="access-label">GERENCIAMENTO</span>
+            </a>
+        </nav>
+
+        <footer class="portal-footer">
+            <div class="system-status">
+                <span class="blink">[</span> STATUS: SISTEMA ONLINE // ATIVO <span class="blink">]</span>
+            </div>
+        </footer>
+
+        <div class="credits">
+            GESTÃO ESTRUTURADA DE ESCALAS PARA OTIMIZAÇÃO DA VISUALIZAÇÃO OPERACIONAL
+        </div>
+    </div>
+
+    <div id="modal-senha" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3 style="margin-top: 0; color: var(--accent-purple); font-family: 'Share Tech Mono', monospace; letter-spacing: 2px;">🔐 ACESSO RESTRITO</h3>
+            <p style="color: var(--text-dim); font-size: 0.9em; margin-bottom: 20px;">Insira a credencial para acessar o módulo de gerenciamento de escalas.</p>
+            
+            <input type="password" id="input-senha" class="form-input-pass" placeholder="••••••••">
+            <p id="erro-senha" style="color: var(--accent-red); font-size: 0.8em; display: none; margin-top: -5px; margin-bottom: 10px;">[!] Acesso negado: Credencial incorreta.</p>
+            
+            <div style="display: flex; gap: 10px;">
+                <button id="btn-confirmar-senha" class="btn-custom" style="flex: 1; background: var(--accent-purple); color: #11111b;">ENTRAR</button>
+                <button id="btn-fechar-senha" class="btn-custom" style="flex: 1; background: transparent; border: 1px solid var(--border-glass); color: var(--text-main);">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

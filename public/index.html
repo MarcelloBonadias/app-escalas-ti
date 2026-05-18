@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Escalas - Escalas da DTI</title>
+    <link rel="icon" href="imagens/logo-noc.png" type="image">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div id="cursor-blur"></div>
+
+    <nav class="navbar">
+        <h1 style="margin:0; font-size: 24px;">INFRAESTRUTURA T.I. - ESCALAS</h1>
+        <div id="modo-badge" class="badge-admin">Modo Admin</div>
+    </nav>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <button id="btn-fechar-filtros" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.2rem;">
+        ✕
+    </button>
+    
+    <h3>Filtros de Exibição</h3>
+            <div class="filter-group">
+                <h4>Empresas</h4>
+                <label class="filter-item"><input type="checkbox" class="cb-empresa" value="HMID" checked> HMID</label>
+                <label class="filter-item"><input type="checkbox" class="cb-empresa" value="PSC" checked> PSC</label>
+                <label class="filter-item"><input type="checkbox" class="cb-empresa" value="UPA" checked> UPA</label>
+                <label class="filter-item"><input type="checkbox" class="cb-empresa" value="NEFRO" checked> NEFRO</label>
+            </div>
+            <div class="filter-group">
+                <h4>Cargos</h4>
+                <label class="filter-item"><input type="checkbox" class="cb-cargo" value="Coordenador" checked> Coordenadores</label>
+                <label class="filter-item"><input type="checkbox" class="cb-cargo" value="Analista" checked> Analistas</label>
+                <label class="filter-item"><input type="checkbox" class="cb-cargo" value="Técnico" checked> Técnicos</label>
+                <label class="filter-item"><input type="checkbox" class="cb-cargo" value="Aprendiz" checked> Aprendizes</label>
+            </div>
+            <div class="filter-group">
+                <h4>Turnos</h4>
+                <label class="filter-item"><input type="checkbox" class="cb-turno" value="Comercial" checked> 💼 Comercial</label>
+                <label class="filter-item"><input type="checkbox" class="cb-turno" value="Diurno" checked> ☀️ Diurno</label>
+                <label class="filter-item"><input type="checkbox" class="cb-turno" value="Noturno" checked> 🌙 Noturno</label>
+                <label class="filter-item"><input type="checkbox" class="cb-turno" value="Ambos" checked> 🔄 Folguista</label>
+            </div>
+            <div class="filter-group">
+                <h4>Status</h4>
+                <label class="filter-item"><input type="checkbox" class="cb-status" value="Plantão" checked> ☀️ Plantões</label>
+                <label class="filter-item"><input type="checkbox" class="cb-status" value="Folga" checked> 🏖️ Folgas</label>
+                <label class="filter-item"><input type="checkbox" class="cb-status" value="Folga Feriado" checked> 🌴 Folga Feriado</label>
+                <label class="filter-item"><input type="checkbox" class="cb-status" value="Atestado" checked> 🏥 Atestados</label>
+                <label class="filter-item"><input type="checkbox" class="cb-status" value="Ausente" checked> ⚠️ Ausentes</label>
+                <label class="filter-item"><input type="checkbox" class="cb-status" value="Fora de Plant." checked> 🚫 Fora de Plant.</label>
+            </div>
+            <div class="filter-group">
+                <h4>Colaboradores</h4>
+                <div id="lista-filtros-pessoas"></div>
+            </div>
+
+            <div class="filter-group" style="margin-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px;">
+                <h4>📋 Equipe Atual</h4>
+                <div id="lista-equipe-sidebar" style="font-size: 0.85em; color: #a6adc8; line-height: 1.6;">
+                    Carregando equipe...
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+           <div class="control-panel">
+                <div class="btn-group-left">
+                    <a href="portal.html" class="btn btn-portal">Voltar</a>
+                    <button id="btn-toggle-filtros" class="btn btn-filtros">Filtros</button>
+                    
+                    <button class="btn btn-gerar admin-only" id="btn-abrir-gerador">Gerar Lote</button>
+                    <button class="btn btn-gerar admin-only" id="btn-abrir-folgas">🏖️ Gerar Folgas</button>
+                    <button class="btn btn-gerar admin-only" id="btn-abrir-atestados" style="background-color: #f38ba8; color: #11111b; border: none;">🏥 Gerar Atestado</button>
+                    
+                    <button class="btn btn-limpar admin-only" id="btn-abrir-limpeza">Limpar Nome</button>
+                    <button class="btn btn-excel" id="btn-exportar-excel">Exportar CSV</button>
+                    <button class="btn btn-print" onclick="window.print()">PDF</button>
+                </div>
+                <div class="btn-group-right">
+                    <button class="btn btn-config admin-only" id="btn-abrir-equipe">Nova Equipe</button>
+                </div>
+            </div>
+            
+            <div id="alerta-cobertura" class="alerta-cobertura" style="display:none;">
+                ⚠️ <strong>Atenção:</strong> Existem dias sem cobertura Diurna ou Noturna neste mês!
+            </div>
+
+            <div class="dashboard-panel" id="dashboard">
+                <span><strong>📊 Plantões Visíveis:</strong></span>
+                <span id="resumo-plantones" style="color: #a6e3a1;">Carregando...</span>
+            </div>
+
+            <div id="calendar-container"><div id='calendar'></div></div>
+        </main>
+    </div>
+
+    <div id="modal-equipe" class="modal">
+        <h3 style="margin-top:0;">Cadastrar Colaborador</h3>
+        <input type="text" id="novo-nome" class="form-input" placeholder="Nome Completo">
+
+        <select id="nova-empresa" class="form-input">
+            <option value="HMID">HMID</option>
+            <option value="PSC">PSC</option>
+            <option value="UPA">UPA</option>
+            <option value="NEFRO">NEFRO</option>
+        </select>
+        
+        <select id="novo-cargo" class="form-input">
+            <option value="Coordenador">Coordenador</option>
+            <option value="Analista">Analista</option>
+            <option value="Técnico">Técnico</option>
+            <option value="Aprendiz">Aprendiz</option>
+        </select>
+        
+        <select id="novo-turno" class="form-input">
+            <option value="Comercial">Comercial (08h-18h)</option>
+            <option value="Diurno">Diurno (07h-19h)</option>
+            <option value="Noturno">Noturno (19h-07h)</option>
+            <option value="Ambos">Ambos (Folguista)</option>
+        </select>
+        
+        <input type="color" id="nova-cor" value="#89b4fa" style="width: 100%; height: 40px; border: none; margin-bottom: 10px; cursor: pointer; border-radius: 5px;">
+        <button class="btn btn-gerar" id="btn-add-user" style="width: 100%; justify-content: center;">+ Adicionar</button>
+        <hr style="margin: 20px 0; border: 0.5px solid rgba(127, 132, 156, 0.3);">
+        <div id="lista-equipe" style="max-height: 150px; overflow-y: auto;"></div>
+        <button class="btn-fechar" onclick="document.getElementById('modal-equipe').style.display='none'">Fechar</button>
+    </div>
+
+    <div id="modal-gerador" class="modal">
+        <h3 style="margin-top:0;">🤖 Gerar Escala</h3>
+        <select id="gerador-nome" class="form-input"></select>
+        
+        <div id="container-gerador-turno" style="display: none; background: rgba(249, 226, 175, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #f9e2af;">
+            <label style="color: #f9e2af; font-size: 0.85em;">Este é um Folguista. Turno a cobrir neste lote:</label>
+            <select id="gerador-turno-escolhido" class="form-input" style="margin-top: 5px; margin-bottom: 0;">
+                <option value="Diurno">Cobrir de Dia (☀️)</option>
+                <option value="Noturno">Cobrir de Noite (🌙)</option>
+            </select>
+        </div>
+        
+        <select id="gerador-regra" class="form-input">
+            <option value="12x36-impar">12x36 (Dias Ímpares)</option>
+            <option value="12x36-par">12x36 (Dias Pares)</option>
+            <option value="seg-sex">Comercial (Segunda a Sexta)</option>
+            <option value="avulso">Dias Avulsos (Folguista)</option>
+        </select>
+
+        <div id="container-dias-avulsos" style="display: none;">
+            <label style="color: #a6adc8; font-size: 0.85em;">Dias (separados por vírgula):</label>
+            <input type="text" id="gerador-dias-manuais" class="form-input" placeholder="Ex: 02, 05, 12, 28">
+        </div>
+
+        <input type="text" id="gerador-mes" class="form-input" placeholder="Mês/Ano (Ex: 04/2026)">
+        <button class="btn btn-gerar" id="btn-confirmar-gerador" style="width: 100%; justify-content: center;">Confirmar Geração</button>
+        <button class="btn-fechar" onclick="document.getElementById('modal-gerador').style.display='none'">Cancelar</button>
+    </div>
+
+    <div id="modal-folgas" class="modal">
+        <h3 style="margin-top:0;">🏖️ Lançamento Rápido de Folgas</h3>
+        
+        <select id="folga-nome" class="form-input"></select>
+
+        <select id="folga-tipo" class="form-input">
+            <option value="Folga">🏖️ Folga Padrão</option>
+            <option value="Folga Feriado">🌴 Folga Feriado</option>
+        </select>
+
+        <input type="text" id="folga-mes" class="form-input" placeholder="Mês/Ano (Ex: 05/2026)">
+        <input type="text" id="folga-dias" class="form-input" placeholder="Dias (Ex: 5, 12, 18, 25)">
+
+        <button class="btn btn-gerar" id="btn-confirmar-folgas" style="width: 100%; justify-content: center;">Lançar Folgas em Lote</button>
+        <button class="btn-fechar" onclick="document.getElementById('modal-folgas').style.display='none'">Cancelar</button>
+    </div>
+
+    <div id="modal-atestados" class="modal">
+        <h3 style="margin-top:0;">🏥 Lançamento de Atestados</h3>
+        
+        <select id="atestado-nome" class="form-input"></select>
+
+        <input type="text" id="atestado-mes" class="form-input" placeholder="Mês/Ano (Ex: 05/2026)">
+        <input type="text" id="atestado-dias" class="form-input" placeholder="Dias (Ex: 10, 11, 12)">
+        <input type="text" id="atestado-descricao" class="form-input" placeholder="Descrição / Motivo (Opcional)">
+
+        <button class="btn btn-gerar" id="btn-confirmar-atestados" style="width: 100%; justify-content: center; background-color: #f38ba8; color: #11111b; border: none;">Gravar Atestados</button>
+        <button class="btn-fechar" onclick="document.getElementById('modal-atestados').style.display='none'">Cancelar</button>
+    </div>
+
+    <div id="modal-limpeza" class="modal">
+        <h3 style="margin-top:0;">🗑️ Limpar Escala</h3>
+        <select id="limpeza-nome" class="form-input"></select>
+        <input type="text" id="limpeza-mes" class="form-input" placeholder="Ex: 04/2026">
+        <button class="btn btn-limpar" id="btn-confirmar-limpeza" style="width: 100%; justify-content: center;">Apagar Registros</button>
+        <button class="btn-fechar" onclick="document.getElementById('modal-limpeza').style.display='none'">Cancelar</button>
+    </div>
+
+    <div id="modal-resumo-dia" class="modal">
+        <h3 id="titulo-resumo-dia" style="margin-top:0; border-bottom: 1px solid #45475a; padding-bottom: 10px;">📅 Resumo</h3>
+        <div id="conteudo-resumo" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px;"></div>
+        
+        <div id="form-add-dia" class="admin-only" style="display: none; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <select id="add-dia-nome" class="form-input"></select>
+            <div id="container-add-dia-turno" style="display: none;">
+                <select id="add-dia-turno-escolhido" class="form-input">
+                    <option value="Diurno">Cobrir de Dia (☀️)</option>
+                    <option value="Noturno">Cobrir de Noite (🌙)</option>
+                </select>
+            </div>
+            <select id="add-dia-status" class="form-input">
+                <option value="Plantão">Plantão / Dia de Trabalho</option>
+                <option value="Fora de Plant.">Fora de Plant.</option>
+                <option value="Folga">Folga</option>
+                <option value="Atestado">Atestado</option>
+                <option value="Folga Feriado">Folga Feriado</option>
+                <option value="Ausente">Ausente</option>
+            </select>
+            
+            <input type="text" id="add-dia-descricao" class="form-input" placeholder="Descrição / Motivo (Opcional)" style="margin-bottom: 10px;">
+            
+            <button class="btn btn-gerar" id="btn-salvar-dia" style="width: 100%; justify-content: center;">Salvar Alteração</button>
+        </div>
+
+        <button class="btn btn-config admin-only" id="btn-toggle-add-dia" style="width: 100%; justify-content: center;">+ Adicionar Registro</button>
+        <button class="btn-fechar" onclick="document.getElementById('modal-resumo-dia').style.display='none'">Fechar</button>
+   </div>
+
+   <div id="modal-editar" class="modal">
+        <h3 style="margin-top:0;">✏️ Alterar Status</h3>
+        <p style="color: var(--text-dim); margin-bottom: 15px;">
+            Colaborador: <strong id="editar-nome-display" style="color: var(--text-main);"></strong>
+        </p>
+        
+        <select id="editar-status" class="form-input">
+            <option value="Plantão">Plantão / Dia de Trabalho</option>
+            <option value="Fora de Plant.">Fora de Plant.</option>
+            <option value="Folga">Folga</option>
+            <option value="Atestado">Atestado</option>
+            <option value="Folga Feriado">Folga Feriado</option>
+            <option value="Ausente">Ausente</option>
+        </select>
+
+        <input type="text" id="editar-descricao" class="form-input" placeholder="Descrição / Motivo (Opcional)" style="margin-top: 10px;">
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn btn-gerar" id="btn-salvar-edicao" style="flex: 1; justify-content: center;">💾 Salvar</button>
+            <button class="btn btn-limpar" id="btn-apagar-edicao" style="flex: 1; justify-content: center;">🗑️ Apagar</button>
+        </div>
+        <button class="btn-fechar" onclick="document.getElementById('modal-editar').style.display='none'">Cancelar</button>
+    </div>
+
+   <div id="overlay-filtros" class="overlay-escondido"></div>
+</body>
+</html>

@@ -1,0 +1,341 @@
+/* =========================================
+   PORTAL CSS - GRIMÓRIO OPS
+   ========================================= */
+
+:root {
+    --bg-deep: #0f0f17;
+    --accent-blue: #89b4fa;
+    --accent-purple: #cba6f7;
+    --accent-green: #a6e3a1;
+    --accent-red: #ffffff;
+    --text-main: #cdd6f4;
+    --text-dim: #a6adc8;
+    --border-glass: rgba(255, 255, 255, 0.1);
+}
+
+.portal-body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #1e1e2e 0%, #0f0f17 100%);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    overflow: hidden;
+}
+
+/* Fundo Cyber-Grid Animado */
+.portal-body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 200%; height: 200%;
+    background-image: 
+        linear-gradient(rgba(137, 180, 250, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(137, 180, 250, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: -1;
+    animation: gridMove 60s linear infinite;
+}
+
+@keyframes gridMove {
+    from { transform: translate(0, 0); }
+    to { transform: translate(-60px, -60px); }
+}
+
+/* Aura do Cursor */
+#cursor-blur {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(137, 180, 250, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 999;
+    transform: translate(-50%, -50%);
+}
+
+/* Container Principal do Portal */
+.portal-container {
+    background: rgba(30, 30, 46, 0.7);
+    backdrop-filter: blur(25px);
+    padding: 60px;
+    border-radius: 40px;
+    border: 1px solid var(--border-glass);
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    max-width: 900px; /* Alargado para caber 3 botões */
+    width: 95%;
+    animation: portalPop 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes portalPop {
+    from { opacity: 0; transform: scale(0.95) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.portal-logo {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 3.5rem;
+    background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 8px;
+    margin-bottom: 5px;
+}
+
+.portal-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    font-size: 0.8rem;
+    margin-bottom: 40px;
+}
+
+/* =========================================
+   CARDS DE NAVEGAÇÃO (3 COLUNAS)
+   ========================================= */
+.portal-nav {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.entry-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-glass);
+    padding: 40px 20px;
+    border-radius: 24px;
+    text-decoration: none;
+    color: var(--text-main);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.entry-card .icon { font-size: 3rem; transition: transform 0.3s; }
+.entry-card h3 { 
+    margin: 0; 
+    font-family: 'Share Tech Mono', monospace; 
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.access-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+/* Efeitos Hover Específicos */
+.entry-card:hover {
+    background: rgba(137, 180, 250, 0.1);
+    border-color: var(--accent-blue);
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(137, 180, 250, 0.2);
+}
+.entry-card:hover .icon { transform: scale(1.2); }
+
+/* Variante Equipe (Verde) */
+.team-variant:hover {
+    background: rgba(166, 227, 161, 0.1);
+    border-color: var(--accent-green);
+    box-shadow: 0 10px 30px rgba(166, 227, 161, 0.2);
+}
+
+/* Variante Admin (Roxo) */
+.admin-variant:hover {
+    background: rgba(203, 166, 247, 0.1);
+    border-color: var(--accent-purple);
+    box-shadow: 0 10px 30px rgba(203, 166, 247, 0.2);
+}
+
+/* =========================================
+   RODAPÉ E CRÉDITOS
+   ========================================= */
+.system-status {
+    margin-top: 50px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent-green);
+    opacity: 0.8;
+}
+
+.blink { animation: blinker 1.5s linear infinite; }
+@keyframes blinker { 50% { opacity: 0; } }
+
+.credits {
+    margin-top: 40px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    opacity: 0.5;
+    text-transform: uppercase;
+}
+
+/* =========================================
+   MODAL DE SENHA CUSTOMIZADO
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 15, 23, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: rgba(30, 30, 46, 0.95);
+    border: 1px solid var(--accent-purple);
+    padding: 30px;
+    border-radius: 16px;
+    width: 350px;
+    box-shadow: 0 10px 40px rgba(203, 166, 247, 0.2);
+    text-align: left;
+    animation: portalPop 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.form-input-pass {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-glass);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.2rem;
+    letter-spacing: 5px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    transition: all 0.3s;
+}
+
+.form-input-pass:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 15px rgba(203, 1)
+}
+/* Adicione no CSS do seu Portal */
+body.light-mode {
+    background: #eef0f4;
+    color: #11111b;
+}
+
+/* Ajuste as classes abaixo para os nomes corretos que você usou no seu Portal */
+body.light-mode .caixa-central-do-portal {
+    background: #ffffff;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+    border: 1px solid #dce0e8;
+}
+
+body.light-mode .botao-do-portal {
+    background: #f8f9fa;
+    border: 1px solid #cdd6f4;
+}
+
+body.light-mode .botao-do-portal:hover {
+    background: #ffffff;
+    border-color: #bac2de;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    transform: translateY(-4px);
+}
+/* =========================================
+   BOTÃO DE TEMA PREMIUM (PORTAL)
+   ========================================= */
+#btn-theme-portal {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    border: 1px solid rgba(245, 201, 122, 0.35); 
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+#btn-theme-portal:hover {
+    background: rgba(245, 201, 122, 0.1);
+    border-color: rgba(245, 201, 122, 0.6);
+    box-shadow: 0 0 15px rgba(245, 201, 122, 0.3);
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   TEMA CLARO DO PORTAL
+   ========================================= */
+body.light-mode {
+    background: #eef0f4;
+    color: #11111b;
+}
+
+/* Suaviza a grade de fundo no modo claro */
+body.light-mode::before {
+    opacity: 0.3;
+}
+
+/* A Caixa Grande do Meio */
+body.light-mode .portal-container {
+    background: #ffffff;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+    border: 1px solid #dce0e8;
+}
+
+/* Textos da Caixa Central */
+body.light-mode .portal-logo {
+    background: linear-gradient(to right, #1e66f5, #8839ef); /* Gradiente mais forte para fundo branco */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+body.light-mode .portal-subtitle { color: #5c5f77; }
+body.light-mode .credits { color: #8c8fa1; }
+
+/* Os 3 Cartões (Escalas, Equipe, Administração) */
+body.light-mode .entry-card {
+    background: #f4f5f9;
+    border: 1px solid #cdd6f4;
+    color: #11111b;
+}
+
+/* Etiquetas menores dentro dos cartões */
+body.light-mode .access-label { 
+    background: #e6e9ef; 
+    color: #4c4f69; 
+}
+
+/* Efeito ao passar o mouse nos cartões */
+body.light-mode .entry-card:hover {
+    background: #ffffff;
+    border-color: #bac2de;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transform: translateY(-5px);
+}
+
+/* Mantendo as cores das Variantes no modo claro */
+body.light-mode .team-variant:hover { border-color: #40a02b; box-shadow: 0 10px 30px rgba(64, 160, 43, 0.15); }
+body.light-mode .admin-variant:hover { border-color: #8839ef; box-shadow: 0 10px 30px rgba(136, 57, 239, 0.15); }
+
+/* Ajuste do botão Tema no Light Mode */
+body.light-mode #btn-theme-portal {
+    background: #ffffff;
+    color: #11111b;
+    border: 1px solid #cdd6f4;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+body.light-mode #btn-theme-portal:hover {
+    background: #f8f9fa;
+    border-color: #bac2de;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
